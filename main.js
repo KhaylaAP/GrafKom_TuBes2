@@ -67,9 +67,32 @@ scene.add(plane_mesh);
 cam.position.set(0, 45, 15);
 cam.lookAt(0, 0, 0);
 // const controls = new OrbitControls(cam, renderer.domElement);
+const key = {}
+window.addEventListener('keydown', (event) => {
+    key[event.key.toLowerCase()] = true;
+});
+window.addEventListener('keyup', (event) => {
+    key[event.key.toLowerCase()] = false;
+});
+
+function movement(){
+    if (key['w']){
+        mesh_dode.position.z -= 0.3;
+    }
+    if (key['s']){
+        mesh_dode.position.z += 0.3;
+    }
+    if (key['a']){
+        mesh_dode.position.x -= 0.3;
+    }
+    if (key['d']){
+        mesh_dode.position.x += 0.3;
+    }
+}
 
 function draw() {
     renderer.render(scene, cam);
+    movement();
     requestAnimationFrame(draw);
 }
 draw();
