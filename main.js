@@ -49,6 +49,19 @@ mesh_dode.position.set(0,1,15);
 mesh_dode.castShadow = true;
 
 
+// Enemy
+const geo_enemy = new THREE.IcosahedronGeometry(2, 0);
+const mat_enemy = new THREE.MeshStandardMaterial({
+    color: 0xff4444,     // merah (enemy)
+    metalness: 0.6,
+    roughness: 0.3
+});
+const enemy = new THREE.Mesh(geo_enemy, mat_enemy);
+enemy.position.set(0, 1, -15); // di depan player
+enemy.castShadow = true;
+scene.add(enemy);
+
+
 // Floor
 let floorloader = new PBRLoader("img/subtle-black-granite-ue/subtle-black-granite_", "png");
 await floorloader.loadTexture();
