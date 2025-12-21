@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import PBRLoader from "./pbr_loader";
 import { GLTFLoader, OrbitControls } from "three/examples/jsm/Addons.js";
+import { randInt } from "three/src/math/MathUtils.js";
 
 const scene = new THREE.Scene();
 const cam = new THREE.PerspectiveCamera(
@@ -90,15 +91,12 @@ let pebblescene = await pebbleLoader.loadAsync("./model/pebble.glb");
 
 
 let pebble_model = pebblescene.scene;
-pebble_model.traverse((obj) => {
+pebble_model.traverse((obj) =>  {
     if (obj.isMesh){
         obj.castShadow = true;
     }
 })
 
-pebble_model.position.set(0, 0, 0);
-pebble_model.scale.set(2,2,2);
-scene.add(pebble_model);
 
 
 // // Player Old
@@ -191,13 +189,58 @@ function movement(){
     }
 }
 
+// ## BULLET SPAWN AND MOVEMENT LOGIC AI GENERATED##
+// ## PROMPT :cara memunculkan banyak bullet di bullets hell game di js, menggunakan three dengan model dari glb ##
+let pebbles = [];
+let angle = 0;
+function bulletSpawns(position,dir,speed){
+    // Pebble bullet spawn logic
+    const pebble = pebble_model.clone()
+    pebble.position.set(position.x, position.y, position.z);
+    scene.add(pebble);
+
+    pebbles.push({
+        mesh: pebble,
+        velocity : dir.clone().normalize().multiplyScalar(speed)
+    });
+    
+}
+
+function updateBullets(){
+    for (let i = pebbles.length - 1; i >= 0; i--){
+        const pebbleData = pebbles[i];
+        pebbleData.mesh.position.add(pebbleData.velocity);
+
+        if (pebbleData.mesh.position.y < -1|| pebbleData.mesh.position.z > gura_model.position.z + 10){ // modifukasi supaya buller menghilang selalu 10 posisi di belakang player
+            scene.remove(pebbleData.mesh);
+            pebbles.splice(i,1);
+        }
+    }
+}
+function aimedShot(origin, playerPos) {
+    const target = playerPos.clone() // modifikasi untuk mengarahkan ke badan player
+    target.y +=2.5 // modifikasi untuk mengarahkan ke badan player
+    const dir = new THREE.Vector3()
+        .subVectors(target, origin)
+        .normalize();
+
+    bulletSpawns(origin, dir, 0.5); //modifikasi speed bullet
+}
+// ## END PROMPT ##
+
 const clock = new THREE.Clock();
+let frame = 0
 
 function draw() {
+    frame++;
     renderer.render(scene, cam);
     const delta = clock.getDelta();
     if(gura_mixer) gura_mixer.update(delta);
     if(calli_mixer) calli_mixer.update(delta);
+    if(frame % 5 === 0){
+        aimedShot({x: randInt(-10,10), y: randInt(10,15), z: randInt(-15,-25)}, gura_model.position);
+    }
+    updateBullets();
     movement();
     requestAnimationFrame(draw);
 }
