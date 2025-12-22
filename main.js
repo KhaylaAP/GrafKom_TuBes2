@@ -156,7 +156,27 @@ window.addEventListener('keyup', (event) => {
     key[event.key.toLowerCase()] = false;
 });
 
-function movement(){
+// wall
+const wallGeo = new THREE.BoxGeometry(100, 5, 1);
+
+const wallMat = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0   
+});
+
+const hiddenWall = new THREE.Mesh(wallGeo, wallMat);
+
+hiddenWall.position.set(0, 1, 0);
+
+scene.add(hiddenWall);
+
+const playerBox = new THREE.Box3();
+const wallBox = new THREE.Box3();
+
+
+function movement() {
+    const prevPos = gura_model.position.clone();
+
     let moving = false;
 
     if (key['w']){
@@ -187,6 +207,13 @@ function movement(){
         gura_idle.play();
         isWalking = false;
     }
+
+    playerBox.setFromObject(gura_model);
+    wallBox.setFromObject(hiddenWall);
+
+    if (playerBox.intersectsBox(wallBox)) {
+        gura_model.position.copy(prevPos); // rollback posisi
+    }  
 }
 
 // ## BULLET SPAWN AND MOVEMENT LOGIC AI GENERATED##
