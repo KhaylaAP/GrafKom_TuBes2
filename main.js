@@ -97,36 +97,6 @@ pebble_model.traverse((obj) =>  {
     }
 })
 
-
-
-// // Player Old
-// let playerLoader = new PBRLoader("img/windswept-wasteland-ue/windswept-wasteland_", "png");
-// await playerLoader.loadTexture();
-// const geo_player = new THREE.DodecahedronGeometry(2,0);
-// const mat_player = new THREE.MeshStandardMaterial({
-//     map: playerLoader.albedo,
-//     normalMap: playerLoader.normal,
-//     roughnessMap: playerLoader.roughness
-// });
-// const mesh_dode = new THREE.Mesh(geo_player, mat_player);
-// scene.add(mesh_dode);
-// mesh_dode.position.set(0,1,15);
-// mesh_dode.castShadow = true;
-
-
-// // Enemy Old
-// const geo_enemy = new THREE.IcosahedronGeometry(2, 0);
-// const mat_enemy = new THREE.MeshStandardMaterial({
-//     color: 0xff4444,     // merah (enemy)
-//     metalness: 0.6,
-//     roughness: 0.3
-// });
-// const enemy = new THREE.Mesh(geo_enemy, mat_enemy);
-// enemy.position.set(0, 1, -15); // di depan player
-// enemy.castShadow = true;
-// scene.add(enemy);
-
-
 // Floor
 let floorloader = new PBRLoader("img/subtle-black-granite-ue/subtle-black-granite_", "png");
 await floorloader.loadTexture();
@@ -292,6 +262,37 @@ function updateBullets(){
         const pebbleData = pebbles[i];
         pebbleData.mesh.position.add(pebbleData.velocity);
 
+        // ## PLAYER HEALTH LOGIC ##
+        // ## PROMPT 1: how to add health to both player and enemy ##
+        // ## PROMPT 2: make it simpler, no need for display or anything, just show the health in console log and just make the logic of the health system ##
+
+        // Create bounding boxes for collision detection
+        const bulletBox = new THREE.Box3().setFromObject(pebbleData.mesh);
+        const playerBox = new THREE.Box3().setFromObject(gura_model);
+        
+        // Check collision with player
+        if (bulletBox.intersectsBox(playerBox)) {
+            // Player takes damage
+            playerHealth -= 10;
+            console.log(`Player hit! Health: ${playerHealth}`);
+            
+            // Remove bullet
+            scene.remove(pebbleData.mesh);
+            pebbles.splice(i, 1);
+            
+            // Check if player is dead
+            if (playerHealth <= 0) {
+                playerHealth = 0;
+                gameActive = false;
+                console.log("GAME OVER - Player defeated!");
+                gura_idle.stop();
+                gura_walk.stop();
+            }
+            
+            continue;
+        }
+    // ## END PROMPT ##
+
         if (pebbleData.mesh.position.y < -1|| pebbleData.mesh.position.z > gura_model.position.z + 10){ // modifukasi supaya buller menghilang selalu 10 posisi di belakang player
             scene.remove(pebbleData.mesh);
             pebbles.splice(i,1);
@@ -309,10 +310,19 @@ function aimedShot(origin, playerPos) {
 }
 // ## END PROMPT ##
 
+// Health system variables
+let playerHealth = 100;
+let gameActive = true;
+
 const clock = new THREE.Clock();
 let frame = 0
 
 function draw() {
+    if (!gameActive) {
+        renderer.render(scene, cam);
+        return;
+    }
+    
     frame++;
     renderer.render(scene, cam);
     const delta = clock.getDelta();
