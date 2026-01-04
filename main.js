@@ -2,6 +2,7 @@ import * as THREE from "three";
 import PBRLoader from "./pbr_loader";
 import { GLTFLoader, OrbitControls } from "three/examples/jsm/Addons.js";
 import { randInt } from "three/src/math/MathUtils.js";
+import { call } from "three/tsl";
 
 const scene = new THREE.Scene();
 const cam = new THREE.PerspectiveCamera(
@@ -310,6 +311,68 @@ function aimedShot(origin, playerPos) {
 }
 // ## END PROMPT ##
 
+const playerBullet = [];
+
+function SpawnPlayerBullet(player, direction){
+    const pebbleB = pebble_model.clone();
+
+    const Player = player.position.clone();
+    Player.y += 2.5;
+
+    pebbleB.position.set(Player.x, Player.y, Player.z);
+    scene.add(pebbleB);
+
+    playerBullet.push({
+        mesh: pebbleB,
+        velocity: direction.clone().normalize().multiplyScalar(0.4)
+    });
+}
+
+// ## PLAYER BULLET UPDATE LOGIC ##
+// ## PROMPT 1: code untuk player bisa menembak ke arah musuh ## 
+// ## PROMPT 2: buat arah tembakan dari player ke musuh ##
+
+const PLAYER_BULLET_BOUND = 60;
+
+function updatePlayerBullets() {
+    for (let i = playerBullet.length - 1; i >= 0; i--) {
+        const b = playerBullet[i];
+        b.mesh.position.add(b.velocity);
+
+        const p = b.mesh.position;
+        // Remove bullet if it goes out of bounds
+        if (
+            Math.abs(p.x) > PLAYER_BULLET_BOUND ||
+            Math.abs(p.z) > PLAYER_BULLET_BOUND ||
+            p.y < -2 || p.y > 20
+        ) {
+            scene.remove(b.mesh);
+            playerBullet.splice(i, 1);
+        }
+    }
+}
+
+function getDirection(player,enemy){
+    const gura = player.position.clone();
+    gura.y += 2.5; // modifikasi supaya tembakan berasal dari badan player
+    const calli = enemy.position.clone();
+    calli.y += 2.5; // modifikasi supaya tembakan mengarah ke badan musuh
+    return new THREE.Vector3()  
+        .subVectors(calli, gura)
+        .normalize();
+}
+
+function Shoot(player, enemy){
+    const dir = getDirection(player, enemy);
+    SpawnPlayerBullet(player, dir);
+}
+
+// ## END PROMPT ##
+
+window.addEventListener('click', (e) => {
+    Shoot(gura_model, calli_model);
+});
+
 // Health system variables
 let playerHealth = 100;
 let gameActive = true;
@@ -331,6 +394,7 @@ function draw() {
     if(frame % 5 === 0){
         aimedShot({x: randInt(-10,10), y: randInt(10,15), z: randInt(-15,-25)}, gura_model.position);
     }
+    updatePlayerBullets();
     updateBullets();
     movement();
     requestAnimationFrame(draw);
