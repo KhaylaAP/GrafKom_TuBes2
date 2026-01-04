@@ -156,7 +156,7 @@ window.addEventListener('keyup', (event) => {
     key[event.key.toLowerCase()] = false;
 });
 
-// wall
+// wall tengah
 const wallGeo = new THREE.BoxGeometry(100, 5, 1);
 
 const wallMat = new THREE.MeshBasicMaterial({
@@ -170,9 +170,57 @@ hiddenWall.position.set(0, 1, 0);
 
 scene.add(hiddenWall);
 
+// wall kanan
+const rightWallGeo = new THREE.BoxGeometry(1, 5, 100);
+
+const rightWallMat = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0
+});
+
+
+const rightWall = new THREE.Mesh(rightWallGeo, rightWallMat);
+
+// geser ke kanan
+rightWall.position.set(25, 1, 0);
+
+scene.add(rightWall);
+
+// wall kiri
+const leftWallGeo = new THREE.BoxGeometry(1, 5, 100);
+
+const leftWallMat = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0
+});
+
+const leftWall = new THREE.Mesh(leftWallGeo, leftWallMat);
+
+// geser ke kiri
+leftWall.position.set(-25, 1, 0);
+
+scene.add(leftWall);
+
+// wall belakang
+const backWallGeo = new THREE.BoxGeometry(100, 5, 1);
+
+const backWallMat = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0
+});
+
+const backWall = new THREE.Mesh(backWallGeo, backWallMat);
+
+// geser ke belakang
+backWall.position.set(0, 1, 25);
+
+scene.add(backWall);
+
 const playerBox = new THREE.Box3();
 const wallBox = new THREE.Box3();
-
+const rightWallBox = new THREE.Box3();
+const leftWallBox = new THREE.Box3();
+const backWallBox = new THREE.Box3();
 
 function movement() {
     const prevPos = gura_model.position.clone();
@@ -210,8 +258,14 @@ function movement() {
 
     playerBox.setFromObject(gura_model);
     wallBox.setFromObject(hiddenWall);
+    rightWallBox.setFromObject(rightWall);
+    leftWallBox.setFromObject(leftWall);
+    backWallBox.setFromObject(backWall);
 
-    if (playerBox.intersectsBox(wallBox)) {
+    if (playerBox.intersectsBox(wallBox)||
+    playerBox.intersectsBox(rightWallBox)||
+    playerBox.intersectsBox(leftWallBox)||
+    playerBox.intersectsBox(backWallBox)) {
         gura_model.position.copy(prevPos); // rollback posisi
     }  
 }
