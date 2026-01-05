@@ -267,8 +267,8 @@ function bulletSpawns(position,dir,speed){
         mesh: pebble,
         velocity : dir.clone().normalize().multiplyScalar(speed)
     });
-    
 }
+// ## END PROMPT ##
 
 function updateBullets(){
     for (let i = pebbles.length - 1; i >= 0; i--){
@@ -313,9 +313,8 @@ function updateBullets(){
                 gura_idle.stop();
                 gura_walk.stop();
             }
-
             // ## END PROMPT ##
-    
+            
             continue;
         }
 
@@ -402,7 +401,6 @@ function updatePlayerBullets() {
 
             continue;
         }
-
         // ## END PROMPT ##
 
         const p = b.mesh.position;
@@ -432,7 +430,6 @@ function Shoot(player, enemy){
     const dir = getDirection(player, enemy);
     SpawnPlayerBullet(player, dir);
 }
-
 // ## END PROMPT ##
 
 window.addEventListener('click', (e) => {
@@ -449,6 +446,9 @@ let playerHealth = 100;
 let enemyHealth = 200;
 let gameActive = true;
 
+// ## MODEL OVERLAY ##
+// ## AI MODEL: DEEPSEEK
+// ## PROMPT : add overlay on the enemy and player so that if they get hit they turn red and slightly jump up ##
 // Hit effect variables
 let playerHitTimer = 0;
 let enemyHitTimer = 0;
@@ -530,7 +530,7 @@ function updateHitEffects() {
         playerHitTimer--;
         // Jump animation
         if (isPlayerJumping) {
-            const jumpHeight = 0.3;
+            const jumpHeight = 1;
             const jumpProgress = 1 - (playerHitTimer / MAX_HIT_TIME);
             
             if (jumpProgress < 0.5) {
@@ -566,7 +566,7 @@ function updateHitEffects() {
         enemyHitTimer--;
         // Jump animation
         if (isEnemyJumping) {
-            const jumpHeight = 0.3;
+            const jumpHeight = 1;
             const jumpProgress = 1 - (enemyHitTimer / MAX_HIT_TIME);
             if (jumpProgress < 0.5) {
                 // Going up
@@ -596,6 +596,7 @@ function updateHitEffects() {
         }
     }
 }
+// ## PROMPT END ##
 
 
 // ## PARTICLE EFFECTS ##
