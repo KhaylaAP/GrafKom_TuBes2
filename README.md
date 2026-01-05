@@ -12,5 +12,8 @@ Anggota:
 - Enemy Model:
 - "Smol Calli - Mori Calliope, HoloMyth" (https://skfb.ly/o799F) by Seafoam is licensed under Creative Commons Attribution-NonCommercial (http://creativecommons.org/licenses/by-nc/4.0/).
 
-- Bullet Model:
+- Bullet(Enemy) Model:
 - "Pebble – Otomo Adventures Game Asset" (https://skfb.ly/pytWL) by whatoson is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+- Bullet(Player) Model:
+- "Jailbird – Otomo Adventures Game Asset" (https://skfb.ly/pyKZX) by whatoson is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
