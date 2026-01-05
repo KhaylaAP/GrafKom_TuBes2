@@ -110,9 +110,9 @@ jailbird_model.traverse((obj) =>  {
 })
 
 // Floor
-let floorloader = new PBRLoader("img/subtle-black-granite-ue/subtle-black-granite_", "png");
+let floorloader = new PBRLoader("img/streaked-marble-ue/streaked-marble-", "png");
 await floorloader.loadTexture();
-const geo_floor = new THREE.PlaneGeometry(100,100,10,10);
+const geo_floor = new THREE.PlaneGeometry(200,200,10,10);
 const mat_floor = new THREE.MeshStandardMaterial({
     map: floorloader.albedo,
     normalMap: floorloader.normal,
@@ -124,7 +124,7 @@ plane_mesh.receiveShadow = true;
 scene.add(plane_mesh);
 
 
-cam.position.set(0, 45, 15);
+cam.position.set(0, 25, 35);
 cam.lookAt(0, 0, 0);
 const controls = new OrbitControls(cam, renderer.domElement);
 
