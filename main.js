@@ -312,6 +312,7 @@ function updateBullets(){
             if (playerHealth <= 0) {
                 playerHealth = 0;
                 gameActive = false;
+                gameOverType = "defeat"; // Player lost
                 console.log("GAME OVER - Player defeated!");
                 gura_idle.stop();
                 gura_walk.stop();
@@ -398,6 +399,7 @@ function updatePlayerBullets() {
             if (enemyHealth <= 0) {
                 enemyHealth = 0;
                 gameActive = false;
+                gameOverType = "victory"; // Player won
                 console.log("VICTORY - Enemy defeated!");
                 calli_idle.stop();
             }
@@ -448,6 +450,11 @@ window.addEventListener('keydown', (e) => {
 let playerHealth = 100;
 let enemyHealth = 200;
 let gameActive = true;
+
+// Camera variables for game over
+let gameOverCameraAngle = 0;
+let victoryCameraAngle = 0;
+let gameOverType = ""; // "defeat" or "victory"
 
 // ## MODEL OVERLAY ##
 // ## AI MODEL: DEEPSEEK
@@ -693,9 +700,44 @@ let frame = 0
 
 function draw() {
     if (!gameActive) {
+        // ## VICTORY / DEFEAT CAMERA ##
+        // ## AI MODEL: DEEPSEEK
+        // ## PROMPT 1: how to make it so that when its game over, the camera spins around the area focusing on the center of the area ##
+        // ## PROMPT 2: should the camera be different when the player wins or should it just stay fixed ##
+        if (gameOverType === "defeat") {
+            // Defeat camera
+            gameOverCameraAngle += 0.005; // Slower rotation
+            
+            // Higher vantage point looking down
+            const cameraX = Math.sin(gameOverCameraAngle) * 50;
+            const cameraZ = Math.cos(gameOverCameraAngle) * 50;
+            const cameraY = 30 + Math.sin(gameOverCameraAngle * 0.5) * 5;
+            
+            cam.position.set(cameraX, cameraY, cameraZ);
+            cam.lookAt(gura_model.position.x, gura_model.position.y + 2, gura_model.position.z); // Focus on player
+            
+        } else if (gameOverType === "victory") {
+            // Victory camera
+            victoryCameraAngle += 0.01; // Faster rotation
+            
+            // Lower, closer orbit around the defeated enemy
+            const cameraX = Math.sin(victoryCameraAngle) * 20;
+            const cameraZ = Math.cos(victoryCameraAngle) * 20;
+            const cameraY = 10 + Math.sin(victoryCameraAngle * 2) * 3; // Bouncy movement
+            
+            cam.position.set(
+                calli_model.position.x + cameraX,
+                calli_model.position.y + cameraY,
+                calli_model.position.z + cameraZ
+            );
+            cam.lookAt(calli_model.position); // Focus on enemy
+        }
+        // ## END PROMPT ##
+        
         updateParticles();
         updateHitEffects();
         renderer.render(scene, cam);
+        requestAnimationFrame(draw);
         return;
     }
     
