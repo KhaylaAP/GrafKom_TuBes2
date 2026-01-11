@@ -409,15 +409,16 @@ function reloadGun(){
 function updateReloadUI() {
     if (!playerGun.reloading) return;
 
-    playerGun.reloadTimer--;
+    playerGun.reloadCounter--;
 
     const progress =
-        1 - (playerGun.reloadTimer / playerGun.reloadTime);
+        1 - (playerGun.reloadCounter / playerGun.reloadTime);
+    console.log("progress... " + progress);
 
     document.getElementById('reload-bar').style.width =
         `${progress * 100}%`;
 
-    if (playerGun.reloadTimer <= 0) {
+    if (playerGun.reloadCounter <= 0) {
         playerGun.reloading = false;
         playerGun.ammo = playerGun.maxAmmo;
 
