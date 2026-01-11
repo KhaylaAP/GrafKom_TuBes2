@@ -60,38 +60,37 @@
         }
 
         #restart-hint {
-        position: fixed;
-        top: 50px;                 
-        left: 50%;
-        transform: translateX(-50%);
         font-family: 'Poppins', sans-serif;
-        font-size: 20px;
-        color: white;
-        opacity: 1;
-        pointer-events: none;
-        transition: opacity 0.4s ease;
-        z-index: 20;
+        font-size: 22px;
+        font-weight: 600;
+        color: #ffffff; /* putih terang */
+        letter-spacing: 1px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
-        #restart-hint.show {
-        opacity: 0.85;
+        #end-screen.show #restart-hint {
+            opacity: 1;
+            transform: translateY(0);
         }
+
 
         #end-screen {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.75); /* background redup */
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
         display: flex;
+        flex-direction: column; /* ⬅ penting */
         justify-content: center;
         align-items: center;
+        gap: 20px; /* jarak antar teks */
         z-index: 999;
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.5s ease;
         }
+
 
         #end-screen.show {
         opacity: 1;
@@ -142,8 +141,9 @@
     </div>
     <div id="end-screen">
         <div id="end-text"></div>
+        <div id="restart-hint">Press "R" to Restart</div>
     </div>
-    <div id="restart-hint">Press 'R' to Restart</div>
+
 
 </body>
 </html>

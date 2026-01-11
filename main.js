@@ -20,7 +20,6 @@ document.body.appendChild(renderer.domElement);
 // ## PROMPT :bagaimana cara membuat display victory ketika player menang dan gameover ketika player kalah ##
 const endScreen = document.getElementById("end-screen");
 const endText = document.getElementById("end-text");
-const restartHint = document.getElementById("restart-hint");
 
 function showEndScreen(type) {
     endScreen.classList.add("show");
@@ -332,7 +331,6 @@ function updateBullets(){
                 playerHealth = 0;
                 gameActive = false;
                 gameOverType = "defeat"; // Player lost
-                restartHint.classList.add("show");
                 showEndScreen("defeat");
                 console.log("GAME OVER - Player defeated!");
                 gura_idle.stop();
@@ -424,7 +422,6 @@ function updatePlayerBullets() {
                 enemyHealth = 0;
                 gameActive = false;
                 gameOverType = "victory"; // Player won
-                restartHint.classList.add("show");
                 showEndScreen("victory");
                 console.log("VICTORY - Enemy defeated!");
                 calli_idle.stop();
