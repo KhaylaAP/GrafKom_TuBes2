@@ -110,12 +110,15 @@ jailbird_model.traverse((obj) =>  {
 })
 
 // Floor
-let floorloader = new PBRLoader("img/streaked-marble-ue/streaked-marble-", "png");
+let floorloader = new PBRLoader("img/stringy-marble-ue/stringy_marble_", "png");
 await floorloader.loadTexture();
-const geo_floor = new THREE.PlaneGeometry(200,200,10,10);
+const geo_floor = new THREE.PlaneGeometry(150,150,10,10);
 const mat_floor = new THREE.MeshStandardMaterial({
     map: floorloader.albedo,
     normalMap: floorloader.normal,
+    aoMap: floorloader.ao,
+    roughnessMap: floorloader.roughness,
+    metalnessMap: floorloader.metallic
 });
 const plane_mesh = new THREE.Mesh(geo_floor, mat_floor);
 plane_mesh.rotation.x = -Math.PI/2;

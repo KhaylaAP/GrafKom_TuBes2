@@ -13,7 +13,7 @@ export default class PBRLoader {
         
         this.ao = await this.texture_loader.loadAsync("./" + this.basic_path + "ao." + this.extension);
         
-        this.height = await this.texture_loader.loadAsync("./" + this.basic_path + "height." + this.extension);
+        // this.height = await this.texture_loader.loadAsync("./" + this.basic_path + "height." + this.extension);
 
         this.metallic = await this.texture_loader.loadAsync("./" + this.basic_path + "metallic." + this.extension);
 
