@@ -13,8 +13,28 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-
 document.body.appendChild(renderer.domElement);
+
+// ## DISPLAY GAME OVER & VICTORY##
+// ## AI MODEL: CHATGPT
+// ## PROMPT :bagaimana cara membuat display victory ketika player menang dan gameover ketika player kalah ##
+const endScreen = document.getElementById("end-screen");
+const endText = document.getElementById("end-text");
+const restartHint = document.getElementById("restart-hint");
+
+function showEndScreen(type) {
+    endScreen.classList.add("show");
+
+    if (type === "victory") {
+        endText.innerText = "VICTORY";
+        endText.style.color = "#00ff88";
+    } else if (type === "defeat") {
+        endText.innerText = "GAME OVER";
+        endText.style.color = "#ff3333";
+    }
+}
+
+// ## END PROMPT ##
 
 window.addEventListener('resize',() => {
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -141,65 +161,62 @@ window.addEventListener('keyup', (event) => {
     key[event.key.toLowerCase()] = false;
 });
 
+window.addEventListener("keydown", (e) => {
+    if (!gameActive && e.key.toLowerCase() === "r") {
+        location.reload();
+    }
+});
+
+
+// ## invisible wall##
+// ## AI MODEL: CHATGPT
+// ## PROMPT :Bagaimana cara agar player tidak terlalu dekat dengan enemy atau seperti bikin hidden wall ##
 // wall tengah
 const wallGeo = new THREE.BoxGeometry(100, 5, 1);
-
 const wallMat = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 0   
 });
-
 const hiddenWall = new THREE.Mesh(wallGeo, wallMat);
-
+// tengah
 hiddenWall.position.set(0, 1, 0);
-
 scene.add(hiddenWall);
+// ## END PROMPT ##
+
 
 // wall kanan
 const rightWallGeo = new THREE.BoxGeometry(1, 5, 100);
-
 const rightWallMat = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 0
 });
-
-
 const rightWall = new THREE.Mesh(rightWallGeo, rightWallMat);
-
 // geser ke kanan
 rightWall.position.set(25, 1, 0);
-
 scene.add(rightWall);
 
 // wall kiri
 const leftWallGeo = new THREE.BoxGeometry(1, 5, 100);
-
 const leftWallMat = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 0
 });
-
 const leftWall = new THREE.Mesh(leftWallGeo, leftWallMat);
-
 // geser ke kiri
 leftWall.position.set(-25, 1, 0);
-
 scene.add(leftWall);
 
 // wall belakang
 const backWallGeo = new THREE.BoxGeometry(100, 5, 1);
-
 const backWallMat = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 0
 });
-
 const backWall = new THREE.Mesh(backWallGeo, backWallMat);
-
 // geser ke belakang
 backWall.position.set(0, 1, 25);
-
 scene.add(backWall);
+
 
 const playerBox = new THREE.Box3();
 const wallBox = new THREE.Box3();
@@ -291,6 +308,8 @@ function updateBullets(){
         if (bulletBox.intersectsBox(playerBox)) {
             // Player takes damage
             playerHealth -= 10;
+            playerHealth = Math.max(playerHealth, 0);
+            updateHealthUI();
             console.log(`Player hit! Health: ${playerHealth}`);
 
             applyHitEffectToPlayer();
@@ -313,6 +332,8 @@ function updateBullets(){
                 playerHealth = 0;
                 gameActive = false;
                 gameOverType = "defeat"; // Player lost
+                restartHint.classList.add("show");
+                showEndScreen("defeat");
                 console.log("GAME OVER - Player defeated!");
                 gura_idle.stop();
                 gura_walk.stop();
@@ -379,7 +400,10 @@ function updatePlayerBullets() {
         if (bulletBox.intersectsBox(enemyBox)) {
             // Enemy takes damage
             enemyHealth -= 10;
+            enemyHealth = Math.max(enemyHealth, 0);
+            updateHealthUI();
             console.log(`Enemy hit! Enemy health: ${enemyHealth}`);
+
 
             applyHitEffectToEnemy();
 
@@ -400,6 +424,8 @@ function updatePlayerBullets() {
                 enemyHealth = 0;
                 gameActive = false;
                 gameOverType = "victory"; // Player won
+                restartHint.classList.add("show");
+                showEndScreen("victory");
                 console.log("VICTORY - Enemy defeated!");
                 calli_idle.stop();
             }
@@ -450,6 +476,29 @@ window.addEventListener('keydown', (e) => {
 let playerHealth = 100;
 let enemyHealth = 200;
 let gameActive = true;
+
+// ## HEALTH DISPLAY ##
+// ## AI MODEL: CHATGPT
+// ## PROMPT : bagaimana cara menambahkan tampilan nyawa dari player dan enemynya ##
+const MAX_PLAYER_HEALTH = 100;
+const MAX_ENEMY_HEALTH = 200;
+
+const playerHPBar = document.getElementById("player-hp");
+const enemyHPBar = document.getElementById("enemy-hp");
+
+function updateHealthUI() {
+    playerHPBar.style.width =
+        (playerHealth / MAX_PLAYER_HEALTH) * 100 + "%";
+
+    enemyHPBar.style.width =
+        (enemyHealth / MAX_ENEMY_HEALTH) * 100 + "%";
+}
+
+// init
+updateHealthUI();
+
+// ## PROMPT END ##
+
 
 // Camera variables for game over
 let gameOverCameraAngle = 0;
