@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tugas Besar 2</title>
     <style>
-        body{
-            margin: 0;
-            overflow: hidden;
-            background-color: black;
-        }
-        #hud {
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: black;
+      }
+      #hud {
         position: fixed;
         top: 20px;
         left: 20px;
@@ -19,48 +19,48 @@
         justify-content: space-between;
         z-index: 10;
         pointer-events: none;
-        font-family: 'Poppins', sans-serif;
-        }
+        font-family: "Poppins", sans-serif;
+      }
 
-        .health-wrapper {
+      .health-wrapper {
         width: 260px;
-        }
+      }
 
-        .health-wrapper.enemy {
+      .health-wrapper.enemy {
         text-align: right;
-        }
+      }
 
-        .label {
+      .label {
         color: white;
         font-size: 14px;
         margin-bottom: 6px;
-        }
+      }
 
-        .health-bar {
+      .health-bar {
         width: 100%;
         height: 18px;
         background: #222;
         border-radius: 10px;
         overflow: hidden;
-        }
+      }
 
-        #player-hp,
-        #enemy-hp {
+      #player-hp,
+      #enemy-hp {
         height: 100%;
         width: 100%;
         transition: width 0.2s ease;
-        }
+      }
 
-        #player-hp {
+      #player-hp {
         background: linear-gradient(90deg, #00ff88, #00cc66);
-        }
+      }
 
-        #enemy-hp {
+      #enemy-hp {
         background: linear-gradient(90deg, #ff4444, #cc0000);
-        }
+      }
 
-        #restart-hint {
-        font-family: 'Poppins', sans-serif;
+      #restart-hint {
+        font-family: "Poppins", sans-serif;
         font-size: 22px;
         font-weight: 600;
         color: #ffffff; /* putih terang */
@@ -68,15 +68,14 @@
         opacity: 0;
         transform: translateY(10px);
         transition: opacity 0.4s ease, transform 0.4s ease;
-        }
+      }
 
-        #end-screen.show #restart-hint {
-            opacity: 1;
-            transform: translateY(0);
-        }
+      #end-screen.show #restart-hint {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-
-        #end-screen {
+      #end-screen {
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.75);
@@ -89,61 +88,83 @@
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.5s ease;
-        }
+      }
 
-
-        #end-screen.show {
+      #end-screen.show {
         opacity: 1;
         pointer-events: auto;
-        }
+      }
 
-        #end-text {
-        font-family: 'Poppins', sans-serif;
+      #end-text {
+        font-family: "Poppins", sans-serif;
         font-size: 80px;
         font-weight: 700;
         text-align: center;
         letter-spacing: 5px;
-        text-shadow: 0 0 30px rgba(255,255,255,0.3);
-        }
-        #end-text {
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+      }
+      #end-text {
         animation: pop 0.6s ease forwards;
-        }
+      }
 
-        @keyframes pop {
+      @keyframes pop {
         from {
-            transform: scale(0.6);
-            opacity: 0;
+          transform: scale(0.6);
+          opacity: 0;
         }
         to {
-            transform: scale(1);
-            opacity: 1;
+          transform: scale(1);
+          opacity: 1;
         }
-        }
+      }
+      #reload-container {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 12px;
+        border: 2px solid #ffffff;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+      }
 
+      #reload-bar {
+        width: 0%;
+        height: 100%;
+        background: #00ff66;
+        transition: width 0.05s linear;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <script type="module" src="main.js"></script>
     <div id="hud">
-        <div class="health-wrapper">
-            <div class="label">PLAYER</div>
-            <div class="health-bar">
-            <div id="player-hp"></div>
-            </div>
+      <div class="health-wrapper">
+        <div class="label">PLAYER</div>
+        <div class="health-bar">
+          <div id="player-hp"></div>
         </div>
+      </div>
 
-        <div class="health-wrapper enemy">
-            <div class="label">ENEMY</div>
-            <div class="health-bar">
-            <div id="enemy-hp"></div>
-            </div>
+      <div class="health-wrapper enemy">
+        <div class="label">ENEMY</div>
+        <div class="health-bar">
+          <div id="enemy-hp"></div>
         </div>
+      </div>
+    </div>
+    <!-- Reload Timer UI -->
+    <!-- Ai Model: ChatGPT -->
+    <!-- Prompt: ui for reload timer -->
+    <div id="reload-container">
+      <div id="reload-bar">
+        <div id="reload-text"></div>
+      </div>
     </div>
     <div id="end-screen">
-        <div id="end-text"></div>
-        <div id="restart-hint">Press "R" to Restart</div>
+      <div id="end-text"></div>
+      <div id="restart-hint">Press "R" to Restart</div>
     </div>
-
-
-</body>
+  </body>
 </html>

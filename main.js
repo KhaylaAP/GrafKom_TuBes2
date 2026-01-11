@@ -270,6 +270,8 @@ function movement() {
         gura_model.position.copy(prevPos); // rollback posisi
     }  
 }
+// ## END PROMPT ##
+
 
 
 // ## BULLET SPAWN AND MOVEMENT LOGIC AI GENERATED##
@@ -287,7 +289,23 @@ function bulletSpawns(position,dir,speed){
         velocity : dir.clone().normalize().multiplyScalar(speed)
     });
 }
-// ## END PROMPT ##
+let angle = 0;
+function spiralShot(origin) {
+    const count = 16;
+
+    for (let i = 0; i < count; i++) {
+        const a = angle + (i / count) * Math.PI * 2;
+
+        bulletSpawns(
+            origin,
+            new THREE.Vector3(Math.cos(a), 0, Math.sin(a)),
+            0.5
+        );
+    }
+
+    angle += 0.08;
+}
+
 
 function updateBullets(){
     for (let i = pebbles.length - 1; i >= 0; i--){
@@ -359,9 +377,79 @@ function aimedShot(origin, playerPos) {
 }
 // ## END PROMPT ##
 
+
+
+const playerGun = {
+    ammo: 5,
+    maxAmmo: 5,
+    reloadTime: 70, // frames
+    reloading: false,
+    reloadCounter: 0
+}
 const playerBullet = [];
 
+// ## PLAYER GUN RELOAD LOGIC ##
+// ## AI MODEL: CHATGPT
+// ## PROMPT : how to make an ammunition for player ##
+// ## PROMPT 2: how to make an ui for reload timer ##
+function reloadGun(){
+    if (playerGun.reloading) {
+        return;
+    }
+    if (playerGun.ammo === playerGun.maxAmmo) {
+        return;
+    }
+    playerGun.reloading = true;
+    playerGun.reloadCounter = playerGun.reloadTime;
+    console.log("Reloading started...");
+    document.getElementById('reload-container').style.display = 'block';
+    document.getElementById('reload-bar').style.width = '0%';
+}
+
+function updateReloadUI() {
+    if (!playerGun.reloading) return;
+
+    playerGun.reloadTimer--;
+
+    const progress =
+        1 - (playerGun.reloadTimer / playerGun.reloadTime);
+
+    document.getElementById('reload-bar').style.width =
+        `${progress * 100}%`;
+
+    if (playerGun.reloadTimer <= 0) {
+        playerGun.reloading = false;
+        playerGun.ammo = playerGun.maxAmmo;
+
+        document.getElementById('reload-container').style.display = 'none';
+    }
+}
+
+
+function reloadingGun(){
+    if (playerGun.reloading) {
+        playerGun.reloadCounter--;
+        if (playerGun.reloadCounter <= 0) {
+            playerGun.ammo = playerGun.maxAmmo;
+            playerGun.reloading = false;
+        }
+        console.log("Reloading..." + playerGun.reloadCounter);
+        document.getElementById('reload-text').innerText =`Reloading ${Math.floor(playerGun.reloadCounter / playerGun.reloadTime * 100)}%`;
+
+    }
+}
+// ## END PROMPT ##
+
 function SpawnPlayerBullet(player, direction){
+    if (playerGun.reloading) {
+        console.log("Reloading...");
+        return;
+    }
+    if (playerGun.ammo <= 0) {
+        console.log("Out of ammo! Press 'R' to reload.");
+        return;
+    }
+
     const jailbird =  jailbird_model.clone();
 
     const Player = player.position.clone();
@@ -374,6 +462,7 @@ function SpawnPlayerBullet(player, direction){
         mesh: jailbird,
         velocity: direction.clone().normalize().multiplyScalar(0.4)
     });
+    playerGun.ammo--;
 }
 
 // ## PLAYER BULLET UPDATE LOGIC ##
@@ -466,6 +555,9 @@ window.addEventListener('click', (e) => {
 window.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
         Shoot(gura_model, calli_model);
+    }
+    if (e.key.toLowerCase() === 'e') {
+        reloadGun();
     }
 });
 
@@ -741,6 +833,8 @@ function updateParticles() {
 }
 // ## END PROMPT ##
 
+
+
 const clock = new THREE.Clock();
 let frame = 0
 
@@ -792,9 +886,24 @@ function draw() {
     const delta = clock.getDelta();
     if(gura_mixer) gura_mixer.update(delta);
     if(calli_mixer) calli_mixer.update(delta);
-    if(frame % 5 === 0){
-        aimedShot({x: randInt(-10,10), y: randInt(10,15), z: randInt(-15,-25)}, gura_model.position);
+    if (enemyHealth <= 50) {
+        if(frame % 5 === 0){
+            aimedShot({x: randInt(-10,10), y: randInt(10,15), z: randInt(-15,-25)}, gura_model.position);
+        }
+        if (frame % 10 === 0) {
+            spiralShot({x : calli_model.position.x, y : calli_model.position.y + 2.5, z : calli_model.position.z});
+        }
+    } else if (enemyHealth <= 100) {
+        if (frame % 10 === 0) {
+            spiralShot({x : calli_model.position.x, y : calli_model.position.y + 2.5, z : calli_model.position.z});
+        }
+    }else {
+        if(frame % 5 === 0){
+            aimedShot({x: randInt(-10,10), y: randInt(10,15), z: randInt(-15,-25)}, gura_model.position);
+        }
     }
+    updateReloadUI();
+    reloadingGun();
     updatePlayerBullets();
     updateBullets();
     updateParticles();
