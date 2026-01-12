@@ -148,7 +148,7 @@ scene.add(plane_mesh);
 
 cam.position.set(0, 25, 35);
 cam.lookAt(0, 0, 0);
-const controls = new OrbitControls(cam, renderer.domElement);
+// const controls = new OrbitControls(cam, renderer.domElement);
 
 const key = {}
 let isWalking = false;
